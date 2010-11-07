@@ -38,6 +38,10 @@ To undo this action you write:
 To redo this undo-ed action:
 
 	UndoManager.redo()
+	
+To clear the undo memory and lose all stored states:
+
+	UndoManager.clear()
 
 Test if UndoManager has any undo actions:
 
