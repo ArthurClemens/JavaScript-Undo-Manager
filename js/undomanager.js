@@ -56,6 +56,14 @@ var UndoManager = {
 		if (this._callback) this._callback();
     },
     
+    /*
+    Clears the memory, losing all stored states.
+    */
+    clear:function() {
+    	this._commandStack = [];
+    	this._index = -1;
+    },
+    
     hasUndo:function() {
     	return this._index != -1;
     },

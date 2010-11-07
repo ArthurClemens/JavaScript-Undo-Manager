@@ -2,9 +2,14 @@
 
 var UndoManager = Backbone.Model.extend({
 
-	_commandStack:[],
-  	_index:-1,
+	_commandStack:undefined,
+  	_index:undefined,
   	_undoManagerContext:false,
+
+	initialize:function() {
+		this._commandStack = [];
+    	this.set({_index:-1});
+	},
 
   	/*
   	Registers an undo and redo command. Both commands are passed as parameters and turned into command objects.
@@ -45,6 +50,10 @@ var UndoManager = Backbone.Model.extend({
     	if (!command) return;
 		this._callCommand(command.redo);
 		this.set({_index:this.get('_index') + 1});
+    },
+    
+    clear:function() {
+    	this.initialize();
     },
     
     hasUndo:function() {

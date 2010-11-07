@@ -13,6 +13,7 @@
             	
             	var btnUndo = document.getElementById('btnUndo');
             	var btnRedo = document.getElementById('btnRedo');
+            	var btnClear = document.getElementById('btnClear');
             	var canvas = document.getElementById('view');
             	
             	function updateUI() {
@@ -30,6 +31,10 @@
 				}
 				btnRedo.onclick = function() {
 					UndoManager.redo();
+					updateUI();
+				}
+				btnClear.onclick = function() {
+					UndoManager.clear();
 					updateUI();
 				}
 				
@@ -55,6 +60,7 @@
 		<div class="commands">
 			<button id="btnUndo" href="#">Undo</button>
 			<button id="btnRedo" href="#">Redo</button>
+			<button id="btnClear" href="#">Clear memory</button>
 		</div>
 		<div>
 			<canvas id="view" width="300" height="150"></canvas>
