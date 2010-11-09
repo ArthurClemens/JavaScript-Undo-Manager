@@ -15,41 +15,40 @@ redo params: you can figure these out...
 
 So in an example create function would look like this:
 
-var App = {
 
-	createPerson:function(name, id) {
+function createPerson (name, id) {
 	
-		if (id == undefined) {
-			// create id...
-		}		
-		// store name and id...
-		
-		this.undoManager.register(
-			this, this.removePerson, [id], 'Remove person',
-			this, this.createPerson, [name, id], 'Create person'
-		);
-	}
-};
+	if (id == undefined) {
+		// create id...
+	}		
+	// store name and id...
+	
+	this.undoManager.register(
+		this, this.removePerson, [id], 'Remove person',
+		this, this.createPerson, [name, id], 'Create person'
+	);
+
+}
 
 To undo this action you write:
 
-	UndoManager.undo()
+	myUndoManager.undo()
 
 To redo this undo-ed action:
 
-	UndoManager.redo()
+	myUndoManager.redo()
 	
 To clear the undo memory and lose all stored states:
 
-	UndoManager.clear()
+	myUndoManager.clear()
 
 Test if UndoManager has any undo actions:
 
-	var hasUndo = UndoManager.hasUndo()
+	var hasUndo = myUndoManager.hasUndo()
 	
 Test if UndoManager has any redo actions:
 
-	var hasRedo = UndoManager.hasRedo()
+	var hasRedo = myUndoManager.hasRedo()
 
 
 	
@@ -70,7 +69,7 @@ A backbone version of the undo manager is also provided. Create an instance of U
 
 If you don't use backbone.js, pass a function to setCallback:
 
-	UndoManager.setCallback(onUndoChanged)
+	myUndoManager.setCallback(onUndoChanged)
 
 
 
