@@ -1,85 +1,99 @@
-var UndoManager = {
+"use strict";
+function UndoManager() {
 
-	_commandStack:[],
-  	_index:-1,
-  	_undoManagerContext:false,
-  	_callback:undefined,
-
-  	/*
-  	Registers an undo and redo command. Both commands are passed as parameters and turned into command objects.
-  	param undoObj: caller of the undo function
-  	param undoFunc: function to be called at myUndoManager.undo
-  	param undoParamsList: (array) parameter list
-  	param undoMsg: message to be used
-  	*/
-	register:function(
-    	undoObj, undoFunc, undoParamsList, undoMsg,
-    	redoObj, redoFunc, redoParamsList, redoMsg
-    ) {
-    	if (this._undoManagerContext) return;
-    
-    	// if we are here after having called undo,
-    	// invalidate items higher on the stack
-		this._commandStack.splice(this._index + 1, this._commandStack.length - this._index);
-				
-    	this._commandStack.push(
-    		{
-    			undo:{o:undoObj, f:undoFunc, p:undoParamsList, m:undoMsg},
-    			redo:{o:redoObj, f:redoFunc, p:redoParamsList, m:redoMsg}
-    		}
-    	);
-    	// set the current index to the end
-    	this._index = this._commandStack.length - 1;
-    	if (this._callback) this._callback();
-    },
-    
-    /*
-    Pass a function to be called on undo and redo actions.
-    */
-    setCallback:function(callbackFunc) {
-    	this._callback = callbackFunc;
-    },
-    
-    undo:function() {
-    	var command = this._commandStack[this._index];
-    	if (!command) return;
-		this._callCommand(command.undo);
-		this._index -= 1;
-		if (this._callback) this._callback();
-    },
-    
-    redo:function() {
-    	var command = this._commandStack[this._index + 1];
-    	if (!command) return;
-		this._callCommand(command.redo);
-		this._index += 1;
-		if (this._callback) this._callback();
-    },
-    
-    /*
-    Clears the memory, losing all stored states.
-    */
-    clear:function() {
-    	this._commandStack = [];
-    	this._index = -1;
-    },
-    
-    hasUndo:function() {
-    	return this._index != -1;
-    },
-    
-    hasRedo:function() {
-    	return this._index < (this._commandStack.length - 1)
-    },
-    
-    _callCommand:function(command) {
-    	if (!command) return;
-    	this._undoManagerContext = true;
+	this.commandStack = [];
+	this.index = -1;
+	this.undoManagerContext = false;
+	this.callback = undefined;
+	
+	this.callCommand = function (command) {
+		if (!command) {
+			return;
+		}
+		this.undoManagerContext = true;
 		command.f.apply(command.o, command.p);
-    	this._undoManagerContext = false;
-    }
+		this.undoManagerContext = false;
+	};
+}
+
+/*
+Registers an undo and redo command. Both commands are passed as parameters and turned into command objects.
+param undoObj: caller of the undo function
+param undoFunc: function to be called at myUndoManager.undo
+param undoParamsList: (array) parameter list
+param undoMsg: message to be used
+*/
+UndoManager.prototype.register = function (
+	undoObj, undoFunc, undoParamsList, undoMsg,
+	redoObj, redoFunc, redoParamsList, redoMsg
+) {
+	if (this.undoManagerContext) {
+		return;
+	}
+
+	// if we are here after having called undo,
+	// invalidate items higher on the stack
+	this.commandStack.splice(this.index + 1, this.commandStack.length - this.index);
+			
+	this.commandStack.push(
+		{
+			undo: {o: undoObj, f: undoFunc, p: undoParamsList, m: undoMsg},
+			redo: {o: redoObj, f: redoFunc, p: redoParamsList, m: redoMsg}
+		}
+	);
+	// set the current index to the end
+	this.index = this.commandStack.length - 1;
+	if (this.callback) {
+		this.callback();
+	}
+};
+  
+/*
+Pass a function to be called on undo and redo actions.
+*/
+UndoManager.prototype.setCallback = function (callbackFunc) {
+	this.callback = callbackFunc;
 };
 
+UndoManager.prototype.undo = function () {
+	var command = this.commandStack[this.index];
+	if (!command) {
+		return;
+	}
+	this.callCommand(command.undo);
+	this.index -= 1;
+	if (this.callback) {
+		this.callback();
+	}
+};
+  
+UndoManager.prototype.redo = function () {
+	var command = this.commandStack[this.index + 1];
+	if (!command) {
+		return;
+	}
+	this.callCommand(command.redo);
+	this.index += 1;
+	if (this.callback) {
+		this.callback();
+	}
+};
+  
+/*
+Clears the memory, losing all stored states.
+*/
+UndoManager.prototype.clear = function () {
+	this.commandStack = [];
+	this.index = -1;
+};
+
+UndoManager.prototype.hasUndo = function () {
+	return this.index !== -1;
+};
+  
+UndoManager.prototype.hasRedo = function () {
+	return this.index < (this.commandStack.length - 1);
+};
 
 /*
 LICENSE
@@ -93,7 +107,7 @@ of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+furnished to do so, subject to the following conditions: 
 
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.

@@ -4,10 +4,16 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" /> 
         <title>Undo and Redo</title>
         
-        <script type="text/javascript" src="js/undomanager.js"></script>
+        <!--
+        These libs are required for running this demo:
+        -->
+        <script type="text/javascript" src="js/underscore-1.1.0.js"></script>
+        <script type="text/javascript" src="js/backbone-min.js"></script>
+        
+        <script type="text/javascript" src="js/undomanager_backbone.js"></script>
         <script type="text/javascript" src="js/circledrawer.js"></script>
-                
-        <script>
+
+		<script>
             window.onload = function() {
             	// with jquery this would be on documentready
             	
@@ -23,24 +29,23 @@
             		btnUndo.disabled = !undoManager.hasUndo();
             		btnRedo.disabled = !undoManager.hasRedo();
             	}
-            	undoManager.setCallback(updateUI);
+            	
+				undoManager.bind('change', updateUI);
 
 				btnUndo.onclick = function() {
 					undoManager.undo();
-					updateUI();
 				}
 				btnRedo.onclick = function() {
 					undoManager.redo();
-					updateUI();
 				}
 				btnClear.onclick = function() {
 					undoManager.clear();
-					updateUI();
 				}
 				
 				updateUI();
 			}   
         </script>
+        
         <style type="text/css" media="all"> 
         	body {
         		font-family:arial, sans-serif;
