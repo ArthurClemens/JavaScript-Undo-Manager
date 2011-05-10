@@ -1,19 +1,19 @@
-"use strict";
 function UndoManager() {
-
-	this.commandStack = [];
-	this.index = -1;
-	this.undoManagerContext = false;
-	this.callback = undefined;
-	
-	this.callCommand = function (command) {
-		if (!command) {
-			return;
-		}
-		this.undoManagerContext = true;
-		command.f.apply(command.o, command.p);
-		this.undoManagerContext = false;
-	};
+    "use strict";
+    
+    this.commandStack = [];
+    this.index = -1;
+    this.undoManagerContext = false;
+    this.callback = undefined;
+    
+    this.callCommand = function (command) {
+        if (!command) {
+            return;
+        }
+        this.undoManagerContext = true;
+        command.f.apply(command.o, command.p);
+        this.undoManagerContext = false;
+    };
 }
 
 /*
@@ -24,75 +24,82 @@ param undoParamsList: (array) parameter list
 param undoMsg: message to be used
 */
 UndoManager.prototype.register = function (
-	undoObj, undoFunc, undoParamsList, undoMsg,
-	redoObj, redoFunc, redoParamsList, redoMsg
+    undoObj, undoFunc, undoParamsList, undoMsg,
+    redoObj, redoFunc, redoParamsList, redoMsg
 ) {
-	if (this.undoManagerContext) {
-		return;
-	}
+    "use strict";
+    if (this.undoManagerContext) {
+        return;
+    }
 
-	// if we are here after having called undo,
-	// invalidate items higher on the stack
-	this.commandStack.splice(this.index + 1, this.commandStack.length - this.index);
-			
-	this.commandStack.push(
-		{
-			undo: {o: undoObj, f: undoFunc, p: undoParamsList, m: undoMsg},
-			redo: {o: redoObj, f: redoFunc, p: redoParamsList, m: redoMsg}
-		}
-	);
-	// set the current index to the end
-	this.index = this.commandStack.length - 1;
-	if (this.callback) {
-		this.callback();
-	}
+    // if we are here after having called undo,
+    // invalidate items higher on the stack
+    this.commandStack.splice(this.index + 1, this.commandStack.length - this.index);
+            
+    this.commandStack.push(
+        {
+            undo: {o: undoObj, f: undoFunc, p: undoParamsList, m: undoMsg},
+            redo: {o: redoObj, f: redoFunc, p: redoParamsList, m: redoMsg}
+        }
+    );
+    // set the current index to the end
+    this.index = this.commandStack.length - 1;
+    if (this.callback) {
+        this.callback();
+    }
 };
   
 /*
 Pass a function to be called on undo and redo actions.
 */
 UndoManager.prototype.setCallback = function (callbackFunc) {
-	this.callback = callbackFunc;
+    "use strict";
+    this.callback = callbackFunc;
 };
 
 UndoManager.prototype.undo = function () {
-	var command = this.commandStack[this.index];
-	if (!command) {
-		return;
-	}
-	this.callCommand(command.undo);
-	this.index -= 1;
-	if (this.callback) {
-		this.callback();
-	}
+    "use strict";
+    var command = this.commandStack[this.index];
+    if (!command) {
+        return;
+    }
+    this.callCommand(command.undo);
+    this.index -= 1;
+    if (this.callback) {
+        this.callback();
+    }
 };
   
 UndoManager.prototype.redo = function () {
-	var command = this.commandStack[this.index + 1];
-	if (!command) {
-		return;
-	}
-	this.callCommand(command.redo);
-	this.index += 1;
-	if (this.callback) {
-		this.callback();
-	}
+    "use strict";
+    var command = this.commandStack[this.index + 1];
+    if (!command) {
+        return;
+    }
+    this.callCommand(command.redo);
+    this.index += 1;
+    if (this.callback) {
+        this.callback();
+    }
 };
   
 /*
 Clears the memory, losing all stored states.
 */
 UndoManager.prototype.clear = function () {
-	this.commandStack = [];
-	this.index = -1;
+    "use strict";
+    this.commandStack = [];
+    this.index = -1;
 };
 
 UndoManager.prototype.hasUndo = function () {
-	return this.index !== -1;
+    "use strict";
+    return this.index !== -1;
 };
   
 UndoManager.prototype.hasRedo = function () {
-	return this.index < (this.commandStack.length - 1);
+    "use strict";
+    return this.index < (this.commandStack.length - 1);
 };
 
 /*

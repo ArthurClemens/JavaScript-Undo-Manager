@@ -1,25 +1,23 @@
-"use strict";
-
 // Requires backbone.js
 var UndoManager = Backbone.Model.extend({
+    
+    commandStack: undefined,
+    index: undefined,
+    undoManagerContext: false,
 
-	commandStack: undefined,
-	index: undefined,
-	undoManagerContext: false,
-
-	initialize: function () {
-		this.commandStack = [];
-		this.set({index: -1});
-	},
-	
-	callCommand: function (command) {
-		if (!command) {
-			return;
-		}
-		this.undoManagerContext = true;
-		command.f.apply(command.o, command.p);
-		this.undoManagerContext = false;
-	}
+    initialize: function () {
+        this.commandStack = [];
+        this.set({index: -1});
+    },
+    
+    callCommand: function (command) {
+        if (!command) {
+            return;
+        }
+        this.undoManagerContext = true;
+        command.f.apply(command.o, command.p);
+        this.undoManagerContext = false;
+    }
 });
 
 /*
@@ -30,62 +28,69 @@ param undoParamsList: (array) parameter list
 param undoMsg: message to be used
 */
 UndoManager.prototype.register = function (
-	undoObj, undoFunc, undoParamsList, undoMsg,
-	redoObj, redoFunc, redoParamsList, redoMsg
+    undoObj, undoFunc, undoParamsList, undoMsg,
+    redoObj, redoFunc, redoParamsList, redoMsg
 ) {
-	if (this.undoManagerContext) {
-		return;
-	}
+    "use strict";
+    if (this.undoManagerContext) {
+        return;
+    }
 
-	// if we are here after having called undo,
-	// invalidate items higher on the stack
-	this.commandStack.splice(this.get('index') + 1, this.commandStack.length - this.get('index'));
-			
-	this.commandStack.push(
-		{
-			undo: {o: undoObj, f: undoFunc, p: undoParamsList, m: undoMsg},
-			redo: {o: redoObj, f: redoFunc, p: redoParamsList, m: redoMsg}
-		}
-	);
-	// set the current index to the end
-	this.set({index: this.commandStack.length - 1});
+    // if we are here after having called undo,
+    // invalidate items higher on the stack
+    this.commandStack.splice(this.get('index') + 1, this.commandStack.length - this.get('index'));
+            
+    this.commandStack.push(
+        {
+            undo: {o: undoObj, f: undoFunc, p: undoParamsList, m: undoMsg},
+            redo: {o: redoObj, f: redoFunc, p: redoParamsList, m: redoMsg}
+        }
+    );
+    // set the current index to the end
+    this.set({index: this.commandStack.length - 1});
 };
     
 UndoManager.prototype.undo = function () {
-	var command = this.commandStack[this.get('index')];
-	if (!command) {
-		return;
-	}
-	this.callCommand(command.undo);
-	this.set({index: this.get('index') - 1});
+    "use strict";
+    var command = this.commandStack[this.get('index')];
+    if (!command) {
+        return;
+    }
+    this.callCommand(command.undo);
+    this.set({index: this.get('index') - 1});
 };  
 
 UndoManager.prototype.redo = function () {
-	var command = this.commandStack[this.get('index') + 1];
-	if (!command) {
-		return;
-	}
-	this.callCommand(command.redo);
-	this.set({index: this.get('index') + 1});
+    "use strict";
+    var command = this.commandStack[this.get('index') + 1];
+    if (!command) {
+        return;
+    }
+    this.callCommand(command.redo);
+    this.set({index: this.get('index') + 1});
 };
   
 UndoManager.prototype.clear = function () {
-	this.initialize();
+    "use strict";
+    this.initialize();
 };
   
 UndoManager.prototype.hasUndo = function () {
-	return this.get('index') !== -1;
+    "use strict";
+    return this.get('index') !== -1;
 };
   
 UndoManager.prototype.hasRedo = function () {
-	return this.get('index') < (this.commandStack.length - 1);
+    "use strict";
+    return this.get('index') < (this.commandStack.length - 1);
 };
   
 /*
 Pass a function to be called on undo and redo actions.
 */
 UndoManager.prototype.setCallback = function (callbackFunc) {
-	this.callback = callbackFunc;
+    "use strict";
+    this.callback = callbackFunc;
 };
 
 /*
