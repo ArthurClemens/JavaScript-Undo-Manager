@@ -12,6 +12,7 @@
                 // with jquery this would be on documentready
                 
                 var undoManager = new UndoManager();
+                
                 var circleDrawer = new CircleDrawer('view');
                 circleDrawer.setUndoManager(undoManager);
                 
@@ -45,6 +46,9 @@
             body {
                 font-family:arial, sans-serif;
             }
+            p {
+            	margin: 0 0 1em 0;
+            }
             #view {
                 margin:.5em 0 .25em 0;
                 border:1px solid #ccc;
@@ -64,6 +68,6 @@
         <div>
             <canvas id="view" width="300" height="150"></canvas>
         </div>
-        <span class="comment">Click on the area to create circles</span>
+        <p class="comment">Click on the area to create circles</p>
     </body>  
 </html>  
