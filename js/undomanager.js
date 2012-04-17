@@ -86,8 +86,14 @@ var UndoManager = function () {
 		Clears the memory, losing all stored states.
 		*/
 		clear: function () {
+			var prev_size = commandStack.length;
+
 			commandStack = [];
 			index = -1;
+
+			if ( callback && ( prev_size > 0 ) ) {
+				callback();
+			}
 		},
 
 		hasUndo: function () {
