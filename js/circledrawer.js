@@ -1,5 +1,8 @@
+/*jslint browser: true */
+
 if (Function.prototype.bind === undefined) {
 	Function.prototype.bind = function (scope) {
+	    "use strict";
 		var ofunction = this;
 		return function () {
 			return ofunction.apply(scope, arguments);
@@ -64,28 +67,35 @@ var CircleDrawer = function (canvasId) {
 		undoManager.register(undefined, removeCircle, [id], 'Remove circle', undefined, createCircle, [id, x, y, color], 'Create circle');
 	}
 
-	drawingCanvas.onclick = function (event) {
+	drawingCanvas.onclick = function (e) {
 
 		/* global window */
-		var mouseX, mouseY, intColor, hexColor, color, id;
+		var mouseX = 0,
+            mouseY = 0,
+            intColor,
+            hexColor,
+            color,
+            id = circleId;
 
-		if (!event) {
-			event = window.event;
-		}
-		mouseX = event.offsetX;
-		if (mouseX === undefined) {
-			mouseX = event.layerX;
-		}
-		mouseY = event.offsetY;
-		if (mouseY === undefined) {
-			mouseY = event.layerY;
-		}
+        if (!e) {
+            e = window.event;
+        }
+        if (e.pageX || e.pageY) {
+            mouseX = e.pageX;
+            mouseY = e.pageY;
+        } else if (e.clientX || e.clientY) {
+            mouseX = e.clientX + document.body.scrollLeft
+                + document.documentElement.scrollLeft;
+            mouseY = e.clientY + document.body.scrollTop
+                + document.documentElement.scrollTop;
+        }
+        mouseX -= drawingCanvas.offsetLeft;
+        mouseY -= drawingCanvas.offsetTop;
 
 		intColor = Math.floor(Math.random() * (256 * 256 * 256));
 		hexColor = parseInt(intColor, 10).toString(16);
-		color = (hexColor.length < 2) ? "0" + hexColor : hexColor;
-		id = circleId;
-		circleId += 1;
+		color = '#' + ((hexColor.length < 2) ? "0" + hexColor : hexColor);
+        id = id + 1;
 
 		createCircle(id, mouseX, mouseY, color);
 	}.bind(this);
