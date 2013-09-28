@@ -91,3 +91,6 @@ To get notified on changes:
     console.log("people", people);
     // people Object {101: "John"}
 
+## Demo
+See [Undo Manager with  canvas drawing](http://arthurclemens.github.com/Javascript-Undo-Manager/).
+
