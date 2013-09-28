@@ -14,9 +14,10 @@ var CircleDrawer = function (canvasId) {
 	"use strict";
 
 	var undoManager,
-		CANVAS_WIDTH = 300,
-		CANVAS_HEIGHT = 150,
-		CIRCLE_RADIUS = 10,
+		CANVAS_WIDTH = document.getElementById("view").width,
+		CANVAS_HEIGHT = document.getElementById("view").height,
+		MIN_CIRCLE_RADIUS = 10,
+		MAX_CIRCLE_RADIUS = 40,
 		drawingContext,
 		circles = [],
 		circleId = 0,
@@ -32,19 +33,21 @@ var CircleDrawer = function (canvasId) {
 		drawingContext.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 	}
 
-	function drawCircle(x, y, color) {
+	function drawCircle(x, y, radius, color) {
 		drawingContext.fillStyle = color;
 		drawingContext.beginPath();
-		drawingContext.arc(x, y, CIRCLE_RADIUS, 0, Math.PI * 2, true);
+		drawingContext.arc(x, y, radius, 0, Math.PI * 2, true);
 		drawingContext.closePath();
 		drawingContext.fill();
 	}
 
 	function draw() {
 		clear();
-		var i;
+		var i,
+		    circle;
 		for (i = 0; i < circles.length; i += 1) {
-			drawCircle(circles[i].x, circles[i].y, circles[i].color);
+		    circle = circles[i];
+			drawCircle(circle.x, circle.y, circle.radius, circle.color);
 		}
 	}
 
@@ -61,10 +64,17 @@ var CircleDrawer = function (canvasId) {
 		draw();
 	}
 
-	function createCircle(id, x, y, color) {
-		circles.push({id: id, x: x, y: y, color: color});
+	function createCircle(attrs) {
+		circles.push(attrs);
 		draw();
-		undoManager.register(undefined, removeCircle, [id], 'Remove circle', undefined, createCircle, [id, x, y, color], 'Create circle');
+		undoManager.add({
+		    undo: function() {
+		        removeCircle(attrs.id);
+		    },
+		    redo: function() {
+		        createCircle(attrs);
+		    }
+		});
 	}
 
 	drawingCanvas.onclick = function (e) {
@@ -75,7 +85,8 @@ var CircleDrawer = function (canvasId) {
             intColor,
             hexColor,
             color,
-            id = circleId;
+            id = circleId,
+            radius;
 
         if (!e) {
             e = window.event;
@@ -96,11 +107,16 @@ var CircleDrawer = function (canvasId) {
 		hexColor = parseInt(intColor, 10).toString(16);
 		color = '#' + ((hexColor.length < 2) ? "0" + hexColor : hexColor);
         id = id + 1;
-
-		createCircle(id, mouseX, mouseY, color);
+        radius = MIN_CIRCLE_RADIUS + Math.random() * (MAX_CIRCLE_RADIUS - MIN_CIRCLE_RADIUS);
+        
+		createCircle({
+		    id: id,
+		    x: mouseX,
+		    y: mouseY,
+		    radius: radius,
+		    color: color
+		});
 	}.bind(this);
-
-	// public
 
 	return {
 		setUndoManager: function (inUndoManager) {

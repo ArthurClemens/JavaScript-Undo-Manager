@@ -1,54 +1,53 @@
 var UndoManager = function () {
     "use strict";
 
-    // private
-    var commandStack = [],
+    var undoCommands = [],
 		index = -1,
-		undoManagerContext = false,
+		isExecuting = false,
 		callback;
 
-	function execute(command) {
+	function execute(command, action) {
 		if (!command) {
-			return;
+			return this;
 		}
-		undoManagerContext = true;
-		command.f.apply(command.o, command.p);
-		undoManagerContext = false;
+		isExecuting = true;
+		
+		command[action]();
+		isExecuting = false;
+		return this;
 	}
-
-	function createCommand(undoObj, undoFunc, undoParamsList, undoMsg, redoObj, redoFunc, redoParamsList, redoMsg) {
-		return {
-			undo: {o: undoObj, f: undoFunc, p: undoParamsList, m: undoMsg},
-			redo: {o: redoObj, f: redoFunc, p: redoParamsList, m: redoMsg}
-		};
-	}
-
-    // public
+    
     return {
 
-		/*
-		Registers an undo and redo command. Both commands are passed as parameters and turned into command objects.
-		param undoObj: caller of the undo function
-		param undoFunc: function to be called at myUndoManager.undo
-		param undoParamsList: (array) parameter list
-		param undoMsg: message to be used
-		*/
-		register: function (undoObj, undoFunc, undoParamsList, undoMsg, redoObj, redoFunc, redoParamsList, redoMsg) {
-			if (undoManagerContext) {
-				return;
+        // legacy support
+        
+        register: function (undoObj, undoFunc, undoParamsList, undoMsg, redoObj, redoFunc, redoParamsList, redoMsg) {
+            this.add({
+                undo: function() {
+                    undoFunc.apply(undoObj, undoParamsList);
+                },
+                redo: function() {
+                    redoFunc.apply(redoObj, redoParamsList);
+                }
+            });
+        },
+        
+		add: function (command) {
+			if (isExecuting) {
+				return this;
 			}
-
 			// if we are here after having called undo,
 			// invalidate items higher on the stack
-			commandStack.splice(index + 1, commandStack.length - index);
+			undoCommands.splice(index + 1, undoCommands.length - index);
 
-			commandStack.push(createCommand(undoObj, undoFunc, undoParamsList, undoMsg, redoObj, redoFunc, redoParamsList, redoMsg));
+			undoCommands.push(command);
 
 			// set the current index to the end
-			index = commandStack.length - 1;
+			index = undoCommands.length - 1;
 			if (callback) {
 				callback();
 			}
+			return this;
 		},
 
 		/*
@@ -59,36 +58,38 @@ var UndoManager = function () {
 		},
 
 		undo: function () {
-			var command = commandStack[index];
+			var command = undoCommands[index];
 			if (!command) {
-				return;
+				return this;
 			}
-			execute(command.undo);
+			execute(command, "undo");
 			index -= 1;
 			if (callback) {
 				callback();
 			}
+			return this;
 		},
 
 		redo: function () {
-			var command = commandStack[index + 1];
+			var command = undoCommands[index + 1];
 			if (!command) {
-				return;
+				return this;
 			}
-			execute(command.redo);
+			execute(command, "redo");
 			index += 1;
 			if (callback) {
 				callback();
 			}
+			return this;
 		},
 
 		/*
 		Clears the memory, losing all stored states.
 		*/
 		clear: function () {
-			var prev_size = commandStack.length;
+			var prev_size = undoCommands.length;
 
-			commandStack = [];
+			undoCommands = [];
 			index = -1;
 
 			if ( callback && ( prev_size > 0 ) ) {
@@ -101,8 +102,12 @@ var UndoManager = function () {
 		},
 
 		hasRedo: function () {
-			return index < (commandStack.length - 1);
-		}
+			return index < (undoCommands.length - 1);
+		},
+		
+		getCommands: function () {
+			return undoCommands;
+		}		
 	};
 };
 
@@ -111,7 +116,7 @@ LICENSE
 
 The MIT License
 
-Copyright (c) 2010-2012 Arthur Clemens, arthur@visiblearea.com
+Copyright (c) 2010-2013 Arthur Clemens, arthur@visiblearea.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

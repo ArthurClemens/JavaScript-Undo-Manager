@@ -1,15 +1,16 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"> 
     <head> 
         <meta http-equiv="content-type" content="text/html; charset=utf-8" /> 
         <title>Undo and Redo</title>
         
-        <script type="text/javascript" src="js/undomanager.js"></script>
+        <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+        
+        <script type="text/javascript" src="../js/undomanager.js"></script>
         <script type="text/javascript" src="js/circledrawer.js"></script>
                 
-        <script>
+        <script defer>
             window.onload = function() {
-                // with jquery this would be on documentready
                 
                 var undoManager = new UndoManager();
                 
@@ -45,6 +46,8 @@
         <style type="text/css" media="all"> 
             body {
                 font-family:arial, sans-serif;
+                padding: 20px;
+                background: #f6f6f6;
             }
             p {
             	margin: 0 0 1em 0;
@@ -52,22 +55,26 @@
             #view {
                 margin:.5em 0 .25em 0;
                 border:1px solid #ccc;
+                background: #fff;
             }
-            .comment {
-                color:#999;
-                font-size:small;
+            .container {
+                width: 600px;
             }
         </style>
     </head>  
     <body>
-        <div class="commands">
-            <button id="btnUndo" href="#">Undo</button>
-            <button id="btnRedo" href="#">Redo</button>
-            <button id="btnClear" href="#">Clear memory</button>
+        <div class="container">
+            <div class="row">
+                <div class="commands">
+                    <button type="button" class="btn btn-primary" id="btnUndo" href="#">Undo</button>
+                    <button type="button" class="btn btn-primary" id="btnRedo" href="#">Redo</button>
+                    <button type="button" class="btn btn-default pull-right" id="btnClear" href="#">Clear memory</button>
+                </div>
+                <div>
+                    <canvas id="view" width="600" height="400"></canvas>
+                </div>
+                <p class="comment mute">Click on the area to create circles</p>
+            </div>
         </div>
-        <div>
-            <canvas id="view" width="300" height="150"></canvas>
-        </div>
-        <p class="comment">Click on the area to create circles</p>
     </body>  
 </html>  
