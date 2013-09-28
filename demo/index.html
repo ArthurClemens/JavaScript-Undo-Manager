@@ -7,42 +7,9 @@
         <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
         
         <script type="text/javascript" src="../js/undomanager.js"></script>
+        <script type="text/javascript" src="js/demo.js"></script>
         <script type="text/javascript" src="js/circledrawer.js"></script>
-                
-        <script defer>
-            window.onload = function() {
-                
-                var undoManager = new UndoManager();
-                
-                var circleDrawer = new CircleDrawer('view');
-                circleDrawer.setUndoManager(undoManager);
-                
-                var btnUndo = document.getElementById('btnUndo');
-                var btnRedo = document.getElementById('btnRedo');
-                var btnClear = document.getElementById('btnClear');
-                
-                function updateUI() {
-                    btnUndo.disabled = !undoManager.hasUndo();
-                    btnRedo.disabled = !undoManager.hasRedo();
-                }
-                undoManager.setCallback(updateUI);
 
-                btnUndo.onclick = function() {
-                    undoManager.undo();
-                    updateUI();
-                };
-                btnRedo.onclick = function() {
-                    undoManager.redo();
-                    updateUI();
-                };
-                btnClear.onclick = function() {
-                    undoManager.clear();
-                    updateUI();
-                };
-                
-                updateUI();
-            };
-        </script>
         <style type="text/css" media="all"> 
             body {
                 font-family:arial, sans-serif;

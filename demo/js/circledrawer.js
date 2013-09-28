@@ -1,15 +1,5 @@
 /*jslint browser: true */
 
-if (Function.prototype.bind === undefined) {
-	Function.prototype.bind = function (scope) {
-	    "use strict";
-		var ofunction = this;
-		return function () {
-			return ofunction.apply(scope, arguments);
-		};
-	};
-}
-
 var CircleDrawer = function (canvasId) {
 	"use strict";
 
@@ -77,9 +67,8 @@ var CircleDrawer = function (canvasId) {
 		});
 	}
 
-	drawingCanvas.onclick = function (e) {
+	drawingCanvas.addEventListener("click", function (e) {
 
-		/* global window */
 		var mouseX = 0,
             mouseY = 0,
             intColor,
@@ -116,7 +105,7 @@ var CircleDrawer = function (canvasId) {
 		    radius: radius,
 		    color: color
 		});
-	}.bind(this);
+	}, false);
 
 	return {
 		setUndoManager: function (inUndoManager) {
