@@ -1,12 +1,16 @@
 window.onload = function() {
-    var undoManager = new UndoManager();
+    var undoManager,
+        circleDrawer,
+        btnUndo,
+        btnRedo,
+        btnClear;
+    
+    undoManager = new UndoManager();
+    circleDrawer = new CircleDrawer("view", undoManager);
 
-    var circleDrawer = new CircleDrawer('view');
-    circleDrawer.setUndoManager(undoManager);
-
-    var btnUndo = document.getElementById('btnUndo');
-    var btnRedo = document.getElementById('btnRedo');
-    var btnClear = document.getElementById('btnClear');
+    btnUndo = document.getElementById('btnUndo');
+    btnRedo = document.getElementById('btnRedo');
+    btnClear = document.getElementById('btnClear');
 
     function updateUI() {
         btnUndo.disabled = !undoManager.hasUndo();
