@@ -3,8 +3,8 @@
 var CircleDrawer = function (canvasId, undoManager) {
     "use strict";
 
-    var CANVAS_WIDTH = document.getElementById("view").width,
-        CANVAS_HEIGHT = document.getElementById("view").height,
+    var CANVAS_WIDTH = document.getElementById(canvasId).width,
+        CANVAS_HEIGHT = document.getElementById(canvasId).height,
         MIN_CIRCLE_RADIUS = 10,
         MAX_CIRCLE_RADIUS = 40,
         drawingContext,
