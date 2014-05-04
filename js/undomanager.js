@@ -2,113 +2,114 @@ var UndoManager = function () {
     "use strict";
 
     var undoCommands = [],
-		index = -1,
-		isExecuting = false,
-		callback;
+        index = -1,
+        isExecuting = false,
+        callback;
 
-	function execute(command, action) {
-		if (!command) {
-			return this;
-		}
-		isExecuting = true;
-		
-		command[action]();
-		isExecuting = false;
-		return this;
-	}
-    
+    function execute(command, action) {
+        if (!command || typeof command[action] !== "function") {
+            return this;
+        }
+        isExecuting = true;
+
+        command[action]();
+
+        isExecuting = false;
+        return this;
+    }
+
     return {
 
         // legacy support
-        
+
         register: function (undoObj, undoFunc, undoParamsList, undoMsg, redoObj, redoFunc, redoParamsList, redoMsg) {
             this.add({
-                undo: function() {
+                undo: function () {
                     undoFunc.apply(undoObj, undoParamsList);
                 },
-                redo: function() {
+                redo: function () {
                     redoFunc.apply(redoObj, redoParamsList);
                 }
             });
         },
-        
-		add: function (command) {
-			if (isExecuting) {
-				return this;
-			}
-			// if we are here after having called undo,
-			// invalidate items higher on the stack
-			undoCommands.splice(index + 1, undoCommands.length - index);
 
-			undoCommands.push(command);
+        add: function (command) {
+            if (isExecuting) {
+                return this;
+            }
+            // if we are here after having called undo,
+            // invalidate items higher on the stack
+            undoCommands.splice(index + 1, undoCommands.length - index);
 
-			// set the current index to the end
-			index = undoCommands.length - 1;
-			if (callback) {
-				callback();
-			}
-			return this;
-		},
+            undoCommands.push(command);
 
-		/*
-		Pass a function to be called on undo and redo actions.
-		*/
-		setCallback: function (callbackFunc) {
-			callback = callbackFunc;
-		},
+            // set the current index to the end
+            index = undoCommands.length - 1;
+            if (callback) {
+                callback();
+            }
+            return this;
+        },
 
-		undo: function () {
-			var command = undoCommands[index];
-			if (!command) {
-				return this;
-			}
-			execute(command, "undo");
-			index -= 1;
-			if (callback) {
-				callback();
-			}
-			return this;
-		},
+        /*
+        Pass a function to be called on undo and redo actions.
+        */
+        setCallback: function (callbackFunc) {
+            callback = callbackFunc;
+        },
 
-		redo: function () {
-			var command = undoCommands[index + 1];
-			if (!command) {
-				return this;
-			}
-			execute(command, "redo");
-			index += 1;
-			if (callback) {
-				callback();
-			}
-			return this;
-		},
+        undo: function () {
+            var command = undoCommands[index];
+            if (!command) {
+                return this;
+            }
+            execute(command, "undo");
+            index -= 1;
+            if (callback) {
+                callback();
+            }
+            return this;
+        },
 
-		/*
-		Clears the memory, losing all stored states.
-		*/
-		clear: function () {
-			var prev_size = undoCommands.length;
+        redo: function () {
+            var command = undoCommands[index + 1];
+            if (!command) {
+                return this;
+            }
+            execute(command, "redo");
+            index += 1;
+            if (callback) {
+                callback();
+            }
+            return this;
+        },
 
-			undoCommands = [];
-			index = -1;
+        /*
+        Clears the memory, losing all stored states.
+        */
+        clear: function () {
+            var prev_size = undoCommands.length;
 
-			if ( callback && ( prev_size > 0 ) ) {
-				callback();
-			}
-		},
+            undoCommands = [];
+            index = -1;
 
-		hasUndo: function () {
-			return index !== -1;
-		},
+            if (callback && (prev_size > 0)) {
+                callback();
+            }
+        },
 
-		hasRedo: function () {
-			return index < (undoCommands.length - 1);
-		},
-		
-		getCommands: function () {
-			return undoCommands;
-		}		
-	};
+        hasUndo: function () {
+            return index !== -1;
+        },
+
+        hasRedo: function () {
+            return index < (undoCommands.length - 1);
+        },
+
+        getCommands: function () {
+            return undoCommands;
+        }
+    };
 };
 
 /*
@@ -116,7 +117,7 @@ LICENSE
 
 The MIT License
 
-Copyright (c) 2010-2013 Arthur Clemens, arthur@visiblearea.com
+Copyright (c) 2010-2014 Arthur Clemens, arthurclemens@gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -88,6 +88,34 @@ describe("UndoManager Suite", function() {
         expect(undoManager.hasUndo()).toBe(true);
     });
     
+    it("Calling redo that is not a function", function() {
+        items = [];
+        
+        var item1 = "A",
+            item2 = "B";
+            
+        addItem(item1);        
+        undoManager.add({
+            undo: function() {
+                removeItem();
+            },
+            redo: undefined
+        });
+        
+        addItem(item2);
+        undoManager.add({
+            undo: function() {
+                removeItem();
+            },
+            redo: undefined
+        });
+        
+        undoManager.undo();
+        undoManager.redo();
+        expect(items.length).toBe(1);
+        expect(undoManager.hasUndo()).toBe(true);
+    });
+    
     it("Calling clear", function() {
         undoManager.clear();
         expect(undoManager.getCommands().length).toBe(0);
