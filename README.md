@@ -3,6 +3,10 @@
 Simple undo manager to provide undo and redo actions in your JavaScript application.
 
 
+## Demo
+See [Undo Manager with  canvas drawing](http://arthurclemens.github.com/Javascript-Undo-Manager/).
+
+
 ## Documentation
 
 Each action the user does (typing a character, moving an object) must be undone AND recreated. We combine this destruction and recreation as one "command" and put it on the undo stack:
@@ -17,9 +21,9 @@ Each action the user does (typing a character, moving an object) must be undone 
         }
     });
 
-Note that you (or the user) still need to do the initial creation yourself. Undo Manager only bother with destruction and recreation.
+Note that you are responsible for the initial creation; Undo Manager only bothers with destruction and recreation.
 
-When undo is called, the top-most item is retrieved from the stack, and its undo callback function is called.
+When undo is called, the top-most item is retrieved from the stack, and its undo  function is called.
 
     undoManager.undo();
 
@@ -27,15 +31,15 @@ This moved the current index one down. We can now use redo to call the (now) nex
 
     undoManager.redo();
 
-To lose all stored states:
+To clear all stored states:
 
     undoManager.clear();
 
-Test if any undo actions are available:
+Test if any undo actions exist:
 
 	var hasUndo = undoManager.hasUndo();
 	
-Test if any redo actions are available:
+Test if any redo actions exist:
 
     var hasRedo = undoManager.hasRedo();
 
@@ -91,6 +95,4 @@ To get notified on changes:
     console.log("people", people);
     // people Object {101: "John"}
 
-## Demo
-See [Undo Manager with  canvas drawing](http://arthurclemens.github.com/Javascript-Undo-Manager/).
 
