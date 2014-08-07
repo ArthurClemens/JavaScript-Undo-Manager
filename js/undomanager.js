@@ -5,7 +5,7 @@ https://github.com/ArthurClemens/Javascript-Undo-Manager
 var UndoManager = function () {
     "use strict";
 
-    var undoCommands = [],
+    var commands = [],
         index = -1,
         isExecuting = false,
         callback,
@@ -36,12 +36,12 @@ var UndoManager = function () {
             }
             // if we are here after having called undo,
             // invalidate items higher on the stack
-            undoCommands.splice(index + 1, undoCommands.length - index);
+            commands.splice(index + 1, commands.length - index);
 
-            undoCommands.push(command);
+            commands.push(command);
 
             // set the current index to the end
-            index = undoCommands.length - 1;
+            index = commands.length - 1;
             if (callback) {
                 callback();
             }
@@ -59,7 +59,7 @@ var UndoManager = function () {
         Perform undo: call the undo function at the current index and decrease the index by 1.
         */
         undo: function () {
-            var command = undoCommands[index];
+            var command = commands[index];
             if (!command) {
                 return this;
             }
@@ -75,7 +75,7 @@ var UndoManager = function () {
         Perform redo: call the redo function at the next index and increase the index by 1.
         */
         redo: function () {
-            var command = undoCommands[index + 1];
+            var command = commands[index + 1];
             if (!command) {
                 return this;
             }
@@ -91,9 +91,9 @@ var UndoManager = function () {
         Clears the memory, losing all stored states. Reset the index.
         */
         clear: function () {
-            var prev_size = undoCommands.length;
+            var prev_size = commands.length;
 
-            undoCommands = [];
+            commands = [];
             index = -1;
 
             if (callback && (prev_size > 0)) {
@@ -106,11 +106,11 @@ var UndoManager = function () {
         },
 
         hasRedo: function () {
-            return index < (undoCommands.length - 1);
+            return index < (commands.length - 1);
         },
 
         getCommands: function () {
-            return undoCommands;
+            return commands;
         }
     };
 };
