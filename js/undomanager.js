@@ -1,12 +1,19 @@
+/*
+Simple Javascript undo and redo.
+https://github.com/ArthurClemens/Javascript-Undo-Manager
+*/
 var UndoManager = function () {
     "use strict";
 
     var undoCommands = [],
         index = -1,
         isExecuting = false,
-        callback;
+        callback,
+        
+        // functions
+        execute;
 
-    function execute(command, action) {
+    execute = function(command, action) {
         if (!command || typeof command[action] !== "function") {
             return this;
         }
@@ -16,23 +23,13 @@ var UndoManager = function () {
 
         isExecuting = false;
         return this;
-    }
+    };
 
     return {
 
-        // legacy support
-
-        register: function (undoObj, undoFunc, undoParamsList, undoMsg, redoObj, redoFunc, redoParamsList, redoMsg) {
-            this.add({
-                undo: function () {
-                    undoFunc.apply(undoObj, undoParamsList);
-                },
-                redo: function () {
-                    redoFunc.apply(redoObj, redoParamsList);
-                }
-            });
-        },
-
+        /*
+        Add a command to the queue.
+        */
         add: function (command) {
             if (isExecuting) {
                 return this;
@@ -58,6 +55,9 @@ var UndoManager = function () {
             callback = callbackFunc;
         },
 
+        /*
+        Perform undo: call the undo function at the current index and decrease the index by 1.
+        */
         undo: function () {
             var command = undoCommands[index];
             if (!command) {
@@ -71,6 +71,9 @@ var UndoManager = function () {
             return this;
         },
 
+        /*
+        Perform redo: call the redo function at the next index and increase the index by 1.
+        */
         redo: function () {
             var command = undoCommands[index + 1];
             if (!command) {
@@ -85,7 +88,7 @@ var UndoManager = function () {
         },
 
         /*
-        Clears the memory, losing all stored states.
+        Clears the memory, losing all stored states. Reset the index.
         */
         clear: function () {
             var prev_size = undoCommands.length;
