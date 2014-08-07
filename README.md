@@ -7,7 +7,7 @@ Simple undo manager to provide undo and redo actions in your JavaScript applicat
 See [Undo Manager with  canvas drawing](http://arthurclemens.github.com/Javascript-Undo-Manager/).
 
 
-## Documentation
+## Background
 
 Each action the user does (typing a character, moving an object) must be undone AND recreated. We combine this destruction and recreation as one "command" and put it on the undo stack:
 
@@ -23,35 +23,45 @@ Each action the user does (typing a character, moving an object) must be undone 
 
 Note that you are responsible for the initial creation; Undo Manager only bothers with destruction and recreation.
 
-When undo is called, the top-most item is retrieved from the stack, and its undo  function is called.
+## Methods
 
     undoManager.undo();
 
-This moved the current index one down. We can now use redo to call the (now) next item to reverse the action:
+Performs the undo action.
+
 
     undoManager.redo();
 
-To clear all stored states:
+Performs the redo action.
+
 
     undoManager.clear();
 
-Test if any undo actions exist:
+Clears all stored states.
+
 
 	var hasUndo = undoManager.hasUndo();
-	
-Test if any redo actions exist:
+
+Tests if any undo actions exist.
+
 
     var hasRedo = undoManager.hasRedo();
 
-To get notified on changes:
+Tests if any redo actions exist.
+
 
 	undoManager.setCallback(myCallback);
-	
+
+Get notified on changes.
+
 
 ## Example
 
     var undoManager = new UndoManager(),
-        people = {};
+        people = {},
+        addPerson,
+        removePerson,
+        createPerson;        
 
     addPerson = function(id, name) {
         people[id] = name;
@@ -61,7 +71,7 @@ To get notified on changes:
         delete people[id];
     };
 
-    function createPerson (id, name) {
+    createPerson = function (id, name) {
 
         // initial storage
         addPerson(id, name);
@@ -95,4 +105,47 @@ To get notified on changes:
     console.log("people", people);
     // people Object {101: "John"}
 
+
+## Loading with RequireJS
+
+If you are using RequireJS, you need to use the ``shim`` config parameter.
+
+Assuming ``require.js`` and ``domReady.js`` are located in ``js/extern``, the ``index.html`` load call would be:
+
+    <script src="js/extern/require.js" data-main="js/demo"></script>
+
+And ``demo.js`` would look like this:
+
+    requirejs.config({
+        baseUrl: "js",
+        paths: {
+            domReady: "extern/domReady",
+            app: "../demo",
+            undomanager: "../../js/undomanager",
+            circledrawer: "circledrawer"
+        },
+        shim: {
+            "undomanager": {
+                exports: "UndoManager"
+            },
+            "circledrawer": {
+                exports: "CircleDrawer"
+            }
+        }
+    });
+
+    require(["domReady", "undomanager", "circledrawer"], function(domReady, UndoManager, CircleDrawer) {
+        "use strict";
+
+        var undoManager,
+            circleDrawer,
+            btnUndo,
+            btnRedo,
+            btnClear;
+
+        undoManager = new UndoManager();
+        circleDrawer = new CircleDrawer("view", undoManager);
+        
+        // etcetera
+    });
 
