@@ -1,0 +1,18 @@
+@import url("http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css");
+
+body {
+    font-family:arial, sans-serif;
+    padding: 20px;
+    background: #f6f6f6;
+}
+p {
+    margin: 0 0 1em 0;
+}
+#view {
+    margin:.5em 0 .25em 0;
+    border:1px solid #ccc;
+    background: #fff;
+}
+.container {
+    width: 600px;
+}

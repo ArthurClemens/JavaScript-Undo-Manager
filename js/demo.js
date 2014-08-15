@@ -1,10 +1,12 @@
-window.onload = function() {
+window.onload = function () {
+    "use strict";
+
     var undoManager,
         circleDrawer,
         btnUndo,
         btnRedo,
         btnClear;
-    
+
     undoManager = new UndoManager();
     circleDrawer = new CircleDrawer("view", undoManager);
 
@@ -18,15 +20,15 @@ window.onload = function() {
     }
     undoManager.setCallback(updateUI);
 
-    btnUndo.onclick = function() {
+    btnUndo.onclick = function () {
         undoManager.undo();
         updateUI();
     };
-    btnRedo.onclick = function() {
+    btnRedo.onclick = function () {
         undoManager.redo();
         updateUI();
     };
-    btnClear.onclick = function() {
+    btnClear.onclick = function () {
         undoManager.clear();
         updateUI();
     };
