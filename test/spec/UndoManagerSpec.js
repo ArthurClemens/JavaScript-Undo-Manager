@@ -116,6 +116,26 @@ describe("UndoManager Suite", function() {
         expect(undoManager.hasUndo()).toBe(true);
     });
     
+    it("Calling undo without redo", function() {
+        items = [];
+        undoManager.clear();
+            
+        addItem("A"); 
+        addItem("B");
+        
+        undoManager.add({
+            undo: function() {
+                removeItem();
+            },
+            redo: undefined
+        });
+        
+        undoManager.undo();
+        undoManager.undo();
+        expect(items.length).toBe(1);
+        expect(undoManager.hasUndo()).toBe(false);
+    });
+    
     it("Calling clear", function() {
         undoManager.clear();
         expect(undoManager.getCommands().length).toBe(0);
