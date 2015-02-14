@@ -40,6 +40,11 @@ Performs the redo action.
 Clears all stored states.
 
 
+	undoManager.setLimit(limit);
+
+Set the maximum number of undo steps. Default: 0 (unlimited).
+
+
 	var hasUndo = undoManager.hasUndo();
 
 Tests if any undo actions exist.
@@ -53,6 +58,7 @@ Tests if any redo actions exist.
 	undoManager.setCallback(myCallback);
 
 Get notified on changes.
+
 
 
 ## Example
