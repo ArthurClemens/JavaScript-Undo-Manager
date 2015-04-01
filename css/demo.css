@@ -1,7 +1,6 @@
-@import url("http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css");
+@import url("http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css");
 
 body {
-    font-family:arial, sans-serif;
     padding: 20px;
     background: #f6f6f6;
 }
@@ -15,4 +14,8 @@ p {
 }
 .container {
     width: 600px;
+}
+input[type="number"] {
+    text-align: center;
+    width: 20px;
 }

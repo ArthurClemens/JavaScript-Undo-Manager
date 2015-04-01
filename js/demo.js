@@ -7,12 +7,13 @@ window.onload = function () {
         btnRedo,
         btnClear;
 
-    undoManager = new UndoManager();
+    undoManager = new UndoManager();    
     circleDrawer = new CircleDrawer("view", undoManager);
 
-    btnUndo = document.getElementById('btnUndo');
-    btnRedo = document.getElementById('btnRedo');
-    btnClear = document.getElementById('btnClear');
+    ctrlLimit = document.getElementById("ctrlLimit");
+    btnUndo = document.getElementById("btnUndo");
+    btnRedo = document.getElementById("btnRedo");
+    btnClear = document.getElementById("btnClear");
 
     function updateUI() {
         btnUndo.disabled = !undoManager.hasUndo();
@@ -32,6 +33,19 @@ window.onload = function () {
         undoManager.clear();
         updateUI();
     };
-
+    var handleLimit = function(l) {
+        var limit = parseInt(l, 10);
+        if (!isNaN(limit)) {
+            undoManager.setLimit(limit);
+        }
+        updateUI();
+    };
+    ctrlLimit.onchange = function() {
+        handleLimit(this.value);
+    };
+    ctrlLimit.oninput = function() {
+        handleLimit(this.value);
+    };
+    
     updateUI();
 };
