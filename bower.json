@@ -1,0 +1,19 @@
+{
+  "name": "Javascript-Undo-Manager",
+  "version": "1.0.0",
+  "description": "Simple undo manager to provide undo and redo actions in your JavaScript application.",
+  "main": "js/undomanager.js",
+  "keywords": [
+    "javascript",
+    "undomanager",
+    "backbonejs"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
