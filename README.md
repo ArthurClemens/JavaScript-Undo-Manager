@@ -78,7 +78,6 @@ Get notified on changes.
     };
 
     createPerson = function (id, name) {
-
         // initial storage
         addPerson(id, name);
 
@@ -96,20 +95,16 @@ Get notified on changes.
     createPerson(101, "John");
     createPerson(102, "Mary");
     
-    console.log("people", people);
-    // people Object {101: "John", 102: "Mary"} 
+    console.log("people", people); // {101: "John", 102: "Mary"} 
     
     undoManager.undo();
-    console.log("people", people);
-    // people Object {101: "John"} 
+    console.log("people", people); // {101: "John"} 
     
     undoManager.undo();
-    console.log("people", people);
-    // people Object {} 
+    console.log("people", people); // {} 
     
     undoManager.redo();
-    console.log("people", people);
-    // people Object {101: "John"}
+    console.log("people", people); // {101: "John"}
 
 
 ## Loading with RequireJS
