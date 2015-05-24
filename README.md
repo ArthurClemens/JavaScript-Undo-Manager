@@ -1,15 +1,26 @@
-# JavaScript Undo Manager
+# Undo Manager
 
 Simple undo manager to provide undo and redo actions in your JavaScript application.
 
 
 ## Demo
-See [Undo Manager with  canvas drawing](http://arthurclemens.github.com/Javascript-Undo-Manager/).
+[Undo Manager with  canvas drawing](http://arthurclemens.github.com/Javascript-Undo-Manager/).
+
+
+## Installation
+
+### npm
+
+`npm install undo-manager`
+
+### Bower
+
+`bower install undo-manager`
 
 
 ## Background
 
-Each action the user does (typing a character, moving an object) must be undone AND recreated. We combine this destruction and recreation as one "command" and put it on the undo stack:
+Actions (typing a character, moving an object) are structured as command pairs: one command for destruction (undo)  and one for creation (redo). Each pair is added to the undo stack:
 
     var undoManager = new UndoManager();
     undoManager.add({
@@ -22,6 +33,53 @@ Each action the user does (typing a character, moving an object) must be undone 
     });
 
 Note that you are responsible for the initial creation; Undo Manager only bothers with destruction and recreation.
+
+### Example
+
+    var undoManager = new UndoManager(),
+        people = {},
+        addPerson,
+        removePerson,
+        createPerson;        
+
+    addPerson = function(id, name) {
+        people[id] = name;
+    };
+
+    removePerson = function(id) {
+        delete people[id];
+    };
+
+    createPerson = function (id, name) {
+        // first creation
+        addPerson(id, name);
+
+        // make undo-able
+        undoManager.add({
+            undo: function() {
+                removePerson(id)
+            },
+            redo: function() {
+                addPerson(id, name);
+            }
+        });
+    }
+    
+    createPerson(101, "John");
+    createPerson(102, "Mary");
+    
+    console.log("people", people); // {101: "John", 102: "Mary"} 
+    
+    undoManager.undo();
+    console.log("people", people); // {101: "John"} 
+    
+    undoManager.undo();
+    console.log("people", people); // {} 
+    
+    undoManager.redo();
+    console.log("people", people); // {101: "John"}
+
+
 
 ## Methods
 
@@ -61,53 +119,10 @@ Get notified on changes.
 
 
 
-## Example
-
-    var undoManager = new UndoManager(),
-        people = {},
-        addPerson,
-        removePerson,
-        createPerson;        
-
-    addPerson = function(id, name) {
-        people[id] = name;
-    };
-
-    removePerson = function(id) {
-        delete people[id];
-    };
-
-    createPerson = function (id, name) {
-        // initial storage
-        addPerson(id, name);
-
-        // make undo-able
-        undoManager.add({
-            undo: function() {
-                removePerson(id)
-            },
-            redo: function() {
-                addPerson(id, name);
-            }
-        });
-    }
-    
-    createPerson(101, "John");
-    createPerson(102, "Mary");
-    
-    console.log("people", people); // {101: "John", 102: "Mary"} 
-    
-    undoManager.undo();
-    console.log("people", people); // {101: "John"} 
-    
-    undoManager.undo();
-    console.log("people", people); // {} 
-    
-    undoManager.redo();
-    console.log("people", people); // {101: "John"}
 
 
-## Loading with RequireJS
+
+## Use with RequireJS
 
 If you are using RequireJS, you need to use the ``shim`` config parameter.
 
