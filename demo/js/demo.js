@@ -2,6 +2,7 @@ window.onload = function () {
     "use strict";
 
     var undoManager,
+        ctrlLimit,
         circleDrawer,
         btnUndo,
         btnRedo,
