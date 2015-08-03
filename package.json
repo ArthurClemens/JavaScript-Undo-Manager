@@ -2,7 +2,7 @@
   "name": "undo-manager",
   "version": "1.0.0",
   "description": "Simple undo manager to provide undo and redo actions in your JavaScript application.",
-  "main": "undomanager.js",
+  "main": "lib/undomanager.js",
   "directories": {
     "test": "test"
   },
