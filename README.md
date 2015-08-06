@@ -119,6 +119,31 @@ Get notified on changes.
 
 
 
+## Use with CommonJS (Webpack, Browserify, Node, etc)
+
+`npm install undo-manager`
+
+`var UndoManager = require('undo-manager')`
+
+If you only need a single instance of UndoManager throughout your application, it may be wise
+to create a module that exports a singleton:
+
+In `undoManager.js`:
+
+    var UndoManager = require('undo-manager'); //require the lib from node_modules
+    var singleton;
+
+    if(!singleton)
+        singleton = new UndoManager();
+
+    module.exports = singleton;
+
+Then throughout your app:
+
+    var undoManager = require('undoManager');
+
+    undoManager.add(...);
+    undoManager.undo();
 
 
 
