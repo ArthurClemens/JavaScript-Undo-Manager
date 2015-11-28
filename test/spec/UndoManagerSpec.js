@@ -7,7 +7,7 @@ describe("UndoManager Suite", function() {
         addItemToUndo;
     
     self = this;
-    items = [];
+
     addItem = function(item) {
         items.push(item);
     };
@@ -25,25 +25,36 @@ describe("UndoManager Suite", function() {
         });
     };
 
+    beforeEach(function() {
+        // Always start with a clean slate
+        items = [];
+        undoManager = new UndoManager();
+    });
+
     it("Create the undo manager", function() {
         undoManager = new UndoManager();
         expect(undoManager).not.toBe(null);
+        expect(undoManager.getCommands().length).toBe(0);
+        expect(undoManager.getIndex()).toBe(-1);
     });
 
     it("Adding a command", function() {
         var item = "A";
-        items = [];
-        
+
         addItem(item);
-        addItemToUndo(item)
+        addItemToUndo(item);
         
         expect(undoManager.getCommands().length).toBe(1);
+        expect(undoManager.getIndex()).toBe(0);
         expect(undoManager.hasUndo()).toBe(true);
         expect(undoManager.hasRedo()).toBe(false);
     });
 
     it("Adding a callback", function() {
         var callbackCalled = 0;
+
+        addItemToUndo("A");
+
         undoManager.setCallback(function() {
             callbackCalled++;
         });
@@ -60,8 +71,6 @@ describe("UndoManager Suite", function() {
     });
 
     it("Calling redo", function() {
-        items = [];
-        
         var item1 = "A",
             item2 = "B";
             
@@ -75,11 +84,11 @@ describe("UndoManager Suite", function() {
         undoManager.redo();
         expect(items.length).toBe(2);
         expect(undoManager.hasUndo()).toBe(true);
+        expect(undoManager.getCommands().length).toBe(2);
+        expect(undoManager.getIndex()).toBe(1);
     });
     
     it("Calling redo that is not a function", function() {
-        items = [];
-        
         var item1 = "A",
             item2 = "B";
             
@@ -103,13 +112,12 @@ describe("UndoManager Suite", function() {
         undoManager.redo();
         expect(items.length).toBe(1);
         expect(undoManager.hasUndo()).toBe(true);
+        expect(undoManager.getCommands().length).toBe(2);
+        expect(undoManager.getIndex()).toBe(1);
     });
     
     it("Calling undo without redo", function() {
-        items = [];
-        undoManager.clear();
-            
-        addItem("A"); 
+        addItem("A");
         addItem("B");
         
         undoManager.add({
@@ -123,18 +131,23 @@ describe("UndoManager Suite", function() {
         undoManager.undo();
         expect(items.length).toBe(1);
         expect(undoManager.hasUndo()).toBe(false);
+        expect(undoManager.getCommands().length).toBe(1);
+        expect(undoManager.getIndex()).toBe(-1);
     });
     
     it("Calling clear", function() {
+        addItemToUndo("A");
+        addItemToUndo("B");
+
         undoManager.clear();
+
         expect(undoManager.getCommands().length).toBe(0);
+        expect(undoManager.getIndex()).toBe(-1);
         expect(undoManager.hasUndo()).toBe(false);
         expect(undoManager.hasRedo()).toBe(false);
     });
 
     it("Calling undo with limit set", function() {
-        items = [];
-        undoManager.clear();
         undoManager.setLimit(5);
         addItem("1");
         addItemToUndo("1");
@@ -169,7 +182,6 @@ describe("UndoManager Suite", function() {
     });
     
     it("Calling undo with limit set to 1", function() {
-        items = [];
         undoManager.setLimit(1);
         
         var item1 = "A",
@@ -195,7 +207,6 @@ describe("UndoManager Suite", function() {
     });
     
     it("Calling undo with limit set to 0", function() {
-        items = [];
         undoManager.setLimit(0);
         
         var item1 = "A",
