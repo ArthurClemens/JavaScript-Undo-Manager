@@ -77,13 +77,13 @@ createPerson = function (id, name) {
 createPerson(101, "John");
 createPerson(102, "Mary");
 
-console.log("people", people); // {101: "John", 102: "Mary"} 
+console.log("people", people); // {101: "John", 102: "Mary"}
 
 undoManager.undo();
-console.log("people", people); // {101: "John"} 
+console.log("people", people); // {101: "John"}
 
 undoManager.undo();
-console.log("people", people); // {} 
+console.log("people", people); // {}
 
 undoManager.redo();
 console.log("people", people); // {101: "John"}
@@ -127,6 +127,11 @@ Tests if any redo actions exist.
 Get notified on changes.
 
 
+    var index = undoManager.getIndex();
+
+Returns the index of the actions list.
+
+
 
 ## Use with CommonJS (Webpack, Browserify, Node, etc)
 
@@ -145,7 +150,7 @@ In `undoManager.js`:
     if (!singleton) {
         singleton = new UndoManager();
     }
-    
+
     module.exports = singleton;
 ~~~
 
@@ -201,8 +206,7 @@ require(["domReady", "undomanager", "circledrawer"], function(domReady, UndoMana
 
     undoManager = new UndoManager();
     circleDrawer = new CircleDrawer("view", undoManager);
-    
+
     // etcetera
 });
 ~~~
-
