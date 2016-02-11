@@ -1,8 +1,8 @@
 {
   "name": "undo-manager",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Simple undo manager to provide undo and redo actions.",
-  "main": "js/undomanager.js",
+  "main": "lib/undomanager.js",
   "keywords": [
     "undo"
   ],
