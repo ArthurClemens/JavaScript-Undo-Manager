@@ -132,6 +132,16 @@ Get notified on changes.
 Returns the index of the actions list.
 
 
+    var groupID = undoManager.group(stepsBefore);
+
+Returns the group index of the new group, which will be created from steps before current index.
+
+
+    var commandsArray = undoManager.getGroup(groupID);
+
+Returns the commands array from group index.
+
+
 
 ## Use with CommonJS (Webpack, Browserify, Node, etc)
 

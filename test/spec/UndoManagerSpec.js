@@ -135,6 +135,33 @@ describe("UndoManager Suite", function() {
         expect(undoManager.getIndex()).toBe(-1);
     });
     
+    it("Calling undo/redo with group", function() {
+        addItem("A")
+        addItemToUndo("A");
+        addItem("B");
+        addItemToUndo("B");
+        var groupID = undoManager.group(2);
+        addItem("C");
+        addItemToUndo("C");
+
+        undoManager.undo();
+        undoManager.undo();
+        expect(items.length).toBe(0);
+        expect(undoManager.hasUndo()).toBe(false);
+        expect(undoManager.getCommands().length).toBe(3);
+        expect(undoManager.getIndex()).toBe(-1);
+        expect(undoManager.getGroup(groupID).length).toBe(2);
+
+        undoManager.redo();
+        undoManager.redo();
+        expect(items.length).toBe(3);
+        expect(undoManager.hasRedo()).toBe(false);
+        expect(undoManager.getCommands().length).toBe(3);
+        expect(undoManager.getIndex()).toBe(2);
+        expect(undoManager.getGroup(groupID).length).toBe(2);
+
+    });
+    
     it("Calling clear", function() {
         addItemToUndo("A");
         addItemToUndo("B");
