@@ -4,8 +4,10 @@ window.onload = function () {
     var undoManager,
         ctrlLimit,
         circleDrawer,
+        groups,
         btnUndo,
         btnRedo,
+        btnGroup,
         btnClear;
 
     undoManager = new UndoManager();    
@@ -15,6 +17,7 @@ window.onload = function () {
     btnUndo = document.getElementById("btnUndo");
     btnRedo = document.getElementById("btnRedo");
     btnClear = document.getElementById("btnClear");
+    btnGroup = document.getElementById("btnGroup");
 
     function updateUI() {
         btnUndo.disabled = !undoManager.hasUndo();
@@ -33,6 +36,15 @@ window.onload = function () {
     btnClear.onclick = function () {
         undoManager.clear();
         updateUI();
+    };
+    btnGroup.onclick = function() {
+        var c = btnGroup.classList;
+        if(c.contains('active')){
+            undoManager.group(undoManager.getIndex()-groups)
+        }else{
+            groups = undoManager.getIndex()
+        }
+        c.toggle('active');
     };
     var handleLimit = function(l) {
         var limit = parseInt(l, 10);
