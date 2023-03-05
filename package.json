@@ -8,7 +8,8 @@
   },
   "scripts": {
     "lint": "eslint --ext .js --fix .",
-    "test": "jasmine-browser-runner runSpecs"
+    "test": "jasmine-browser-runner runSpecs",
+    "github": "cp -f ./lib/undomanager.js ./demo/js/ && cp -R demo/* ../gh-pages"
   },
   "devDependencies": {
     "chromedriver": "^110.0.0",
