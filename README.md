@@ -77,16 +77,16 @@ function createPerson(id, name) {
 createPerson(101, "John");
 createPerson(102, "Mary");
 
-console.log("people", people); // {101: "John", 102: "Mary"}
+console.log(people); // logs: {101: "John", 102: "Mary"}
 
 undoManager.undo();
-console.log("people", people); // {101: "John"}
+console.log(people); // logs: {101: "John"}
 
 undoManager.undo();
-console.log("people", people); // {}
+console.log(people); // logs: {}
 
 undoManager.redo();
-console.log("people", people); // {101: "John"}
+console.log(people); // logs: {101: "John"}
 ```
 
 
