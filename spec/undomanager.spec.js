@@ -1,5 +1,5 @@
 describe('UndoManager Suite', function () {
-  var self, undoManager, items, addItem, removeItem, addItemToUndo;
+  let self, undoManager, items, addItem, removeItem, addItemToUndo;
 
   self = this;
 
@@ -23,7 +23,7 @@ describe('UndoManager Suite', function () {
   beforeEach(function () {
     // Always start with a clean slate
     items = [];
-    undoManager = new UndoManager();
+    undoManager = new window.UndoManager();
   });
 
   it('Create the undo manager', function () {
@@ -34,7 +34,7 @@ describe('UndoManager Suite', function () {
   });
 
   it('Adding a command', function () {
-    var item = 'A';
+    let item = 'A';
 
     addItem(item);
     addItemToUndo(item);
@@ -46,7 +46,7 @@ describe('UndoManager Suite', function () {
   });
 
   it('Adding a callback', function () {
-    var callbackCalled = 0;
+    let callbackCalled = 0;
 
     addItemToUndo('A');
 
@@ -66,7 +66,7 @@ describe('UndoManager Suite', function () {
   });
 
   it('Calling redo', function () {
-    var item1 = 'A',
+    let item1 = 'A',
       item2 = 'B';
 
     addItem(item1);
@@ -84,7 +84,7 @@ describe('UndoManager Suite', function () {
   });
 
   it('Calling redo that is not a function', function () {
-    var item1 = 'A',
+    let item1 = 'A',
       item2 = 'B';
 
     addItem(item1);
@@ -179,7 +179,7 @@ describe('UndoManager Suite', function () {
   it('Calling undo with limit set to 1', function () {
     undoManager.setLimit(1);
 
-    var item1 = 'A',
+    let item1 = 'A',
       item2 = 'B',
       item3 = 'C';
 
@@ -204,7 +204,7 @@ describe('UndoManager Suite', function () {
   it('Calling undo with limit set to 0', function () {
     undoManager.setLimit(0);
 
-    var item1 = 'A',
+    let item1 = 'A',
       item2 = 'B',
       item3 = 'C';
 
