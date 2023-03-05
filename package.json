@@ -7,7 +7,7 @@
     "postinstall": "sh scripts/link-lib.sh",
     "lint": "eslint --ext .js --fix .",
     "test": "jasmine-browser-runner runSpecs",
-    "github": "cp -f ./lib/undomanager.js ./demo/js/ && cp -R demo/* ../gh-pages"
+    "github": "cp -pfr demo/* ../gh-pages"
   },
   "devDependencies": {
     "chromedriver": "^110.0.0",
