@@ -3,75 +3,75 @@
 Simple undo manager to provide undo and redo actions in JavaScript applications.
 
 
+- [Demos](#demos)
+- [Installation](#installation)
+- [Example](#example)
+- [Methods](#methods)
+  - [undo](#undo)
+  - [redo](#redo)
+  - [clear](#clear)
+  - [setLimit](#setlimit)
+  - [hasUndo](#hasundo)
+  - [hasRedo](#hasredo)
+  - [setCallback](#setcallback)
+  - [getIndex](#getindex)
+- [Use with CommonJS](#use-with-commonjs)
+- [Use with RequireJS](#use-with-requirejs)
+
+
 ## Demos
 
-* [Undo Manager with  canvas drawing](http://arthurclemens.github.com/Javascript-Undo-Manager/)
+* [Undo Manager with canvas drawing](https://arthurclemens.github.io/JavaScript-Undo-Manager/)
 * [JSBin demo, also with canvas](http://jsbin.com/tidibi/edit?js,output)
 
 
 ## Installation
 
-### npm
-
-`npm install undo-manager`
-
-### Bower
-
-`bower install undo-manager`
-
-### jspm
-
-`jspm install npm:undo-manager`
+```
+npm install undo-manager
+```
 
 
-## Background
+## Example
 
-Actions (typing a character, moving an object) are structured as command pairs: one command for destruction (undo)  and one for creation (redo). Each pair is added to the undo stack:
+Actions (typing a character, moving an object) are structured as command pairs: one command for destruction (undo) and one for creation (redo). Each pair is added to the undo stack:
 
-~~~javascript
-var undoManager = new UndoManager();
+```js
+const undoManager = new UndoManager();
 undoManager.add({
-    undo: function() {
-        // ...
-    },
-    redo: function() {
-        // ...
-    }
+  undo: function() {
+    // ...
+  },
+  redo: function() {
+    // ...
+  }
 });
-~~~
+```
 
-Note that you are responsible for the initial creation; Undo Manager only bothers with destruction and recreation.
+To make an action undoable, you'd add an undo/redo pair to the undo manager:
 
-### Example
 
-~~~javascript
-var undoManager = new UndoManager(),
-    people = {},
-    addPerson,
-    removePerson,
-    createPerson;        
+```js
+const undoManager = new UndoManager();
+const people = {}; 
 
-addPerson = function(id, name) {
-    people[id] = name;
+function addPerson(id, name) {
+  people[id] = name;
 };
 
-removePerson = function(id) {
-    delete people[id];
+function removePerson(id) {
+  delete people[id];
 };
 
-createPerson = function (id, name) {
-    // first creation
-    addPerson(id, name);
+function createPerson(id, name) {
+  // first creation
+  addPerson(id, name);
 
-    // make undo-able
-    undoManager.add({
-        undo: function() {
-            removePerson(id)
-        },
-        redo: function() {
-            addPerson(id, name);
-        }
-    });
+  // make undoable
+  undoManager.add({
+    undo: () => removePerson(id),
+    redo: () => addPerson(id, name)
+  });
 }
 
 createPerson(101, "John");
@@ -87,126 +87,153 @@ console.log("people", people); // {}
 
 undoManager.redo();
 console.log("people", people); // {101: "John"}
-~~~
+```
 
 
 ## Methods
 
-    undoManager.undo();
+### undo
 
 Performs the undo action.
 
+```js
+undoManager.undo();
+```
 
-    undoManager.redo();
+### redo
 
 Performs the redo action.
 
+```js
+undoManager.redo();
+```
 
-    undoManager.clear();
+### clear
 
 Clears all stored states.
 
+```js
+undoManager.clear();
+```
 
-	undoManager.setLimit(limit);
+### setLimit
 
 Set the maximum number of undo steps. Default: 0 (unlimited).
 
+```js
+undoManager.setLimit(limit);
+```
 
-	var hasUndo = undoManager.hasUndo();
+### hasUndo
 
 Tests if any undo actions exist.
 
+```js
+const hasUndo = undoManager.hasUndo();
+```
 
-    var hasRedo = undoManager.hasRedo();
+### hasRedo
 
 Tests if any redo actions exist.
 
+```js
+const hasRedo = undoManager.hasRedo();
+```
 
-	undoManager.setCallback(myCallback);
+### setCallback
 
 Get notified on changes.
 
+```js
+undoManager.setCallback(myCallback);
+```
 
-    var index = undoManager.getIndex();
+### getIndex
 
 Returns the index of the actions list.
 
+```js
+const index = undoManager.getIndex();
+```
 
+## Use with CommonJS
 
-## Use with CommonJS (Webpack, Browserify, Node, etc)
+```bash
+npm install undo-manager
+```
 
-`npm install undo-manager`
-
-`var UndoManager = require('undo-manager')`
+```js
+const UndoManager = require('undo-manager')
+```
 
 If you only need a single instance of UndoManager throughout your application, it may be wise to create a module that exports a singleton:
 
-In `undoManager.js`:
+```js
+// undoManager.js
+const undoManager = require('undo-manager'); // require the lib from node_modules
+let singleton = undefined;
 
-~~~javascript
-    var UndoManager = require('undo-manager'); // require the lib from node_modules
-    var singleton;
+if (!singleton) {
+  singleton = new undoManager();
+}
 
-    if (!singleton) {
-        singleton = new UndoManager();
-    }
-
-    module.exports = singleton;
-~~~
+module.exports = singleton;
+```
 
 Then in your app:
 
-~~~javascript
-    var undoManager = require('undoManager');
+```js
+// app.js
+const undoManager = require('undoManager');
 
-    undoManager.add(...);
-    undoManager.undo();
-~~~
+undoManager.add(...);
+undoManager.undo();
+```
 
 
 ## Use with RequireJS
 
-If you are using RequireJS, you need to use the ``shim`` config parameter.
+If you are using RequireJS, you need to use the `shim` config parameter.
 
-Assuming ``require.js`` and ``domReady.js`` are located in ``js/extern``, the ``index.html`` load call would be:
+Assuming `require.js` and `domReady.js` are located in `js/extern`, the `index.html` load call would be:
 
-~~~html
+```html
 <script src="js/extern/require.js" data-main="js/demo"></script>
-~~~
+```
 
-And ``demo.js`` would look like this:
+And `demo.js` would look like this:
 
-~~~javascript
+```js
 requirejs.config({
-    baseUrl: "js",
-    paths: {
-        domReady: "extern/domReady",
-        app: "../demo",
-        undomanager: "../../js/undomanager",
-        circledrawer: "circledrawer"
+  baseUrl: "js",
+  paths: {
+    domReady: "extern/domReady",
+    app: "../demo",
+    undomanager: "../../js/undomanager",
+    circledrawer: "circledrawer"
+  },
+  shim: {
+    "undomanager": {
+      exports: "UndoManager"
     },
-    shim: {
-        "undomanager": {
-            exports: "UndoManager"
-        },
-        "circledrawer": {
-            exports: "CircleDrawer"
-        }
+    "circledrawer": {
+      exports: "CircleDrawer"
     }
+  }
 });
 
 require(["domReady", "undomanager", "circledrawer"], function(domReady, UndoManager, CircleDrawer) {
-    "use strict";
+  "use strict";
 
-    var undoManager,
-        circleDrawer,
-        btnUndo,
-        btnRedo,
-        btnClear;
+  let undoManager,
+    circleDrawer,
+    btnUndo,
+    btnRedo,
+    btnClear;
 
-    undoManager = new UndoManager();
-    circleDrawer = new CircleDrawer("view", undoManager);
+  undoManager = new UndoManager();
+  circleDrawer = new CircleDrawer("view", undoManager);
 
-    // etcetera
+  // etcetera
 });
-~~~
+```
