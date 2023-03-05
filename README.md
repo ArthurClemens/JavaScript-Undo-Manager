@@ -15,6 +15,7 @@ Simple undo manager to provide undo and redo actions in JavaScript applications.
   - [hasRedo](#hasredo)
   - [setCallback](#setcallback)
   - [getIndex](#getindex)
+  - [getCommands](#getcommands)
 - [Use with CommonJS](#use-with-commonjs)
 - [Use with RequireJS](#use-with-requirejs)
 
@@ -142,7 +143,7 @@ const hasRedo = undoManager.hasRedo();
 
 ### setCallback
 
-Get notified on changes.
+Get notified on changes. Pass a function to be called on undo and redo actions.
 
 ```js
 undoManager.setCallback(myCallback);
@@ -154,6 +155,14 @@ Returns the index of the actions list.
 
 ```js
 const index = undoManager.getIndex();
+```
+
+### getCommands
+
+Returns the list of queued commands.
+
+```js
+const commands = undoManager.getCommands();
 ```
 
 ## Use with CommonJS
