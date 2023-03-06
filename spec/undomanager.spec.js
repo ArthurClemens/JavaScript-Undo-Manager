@@ -1,16 +1,17 @@
 describe('UndoManager Suite', function () {
-  let self, undoManager, items, addItem, removeItem, addItemToUndo;
+  let undoManager, items;
 
-  self = this;
-
-  addItem = function (item) {
+  function addItem(item) {
     items.push(item);
-  };
-  removeItem = function () {
+  }
+
+  function removeItem() {
     items.pop();
-  };
-  addItemToUndo = function (item) {
+  }
+
+  function addItemToUndo(item, groupId) {
     undoManager.add({
+      groupId,
       undo: function () {
         removeItem();
       },
@@ -18,7 +19,7 @@ describe('UndoManager Suite', function () {
         addItem(item);
       },
     });
-  };
+  }
 
   beforeEach(function () {
     // Always start with a clean slate
@@ -223,5 +224,41 @@ describe('UndoManager Suite', function () {
     expect(undoManager.hasUndo()).toBe(true);
     expect(undoManager.hasRedo()).toBe(true);
     expect(undoManager.getCommands().length).toBe(3);
+  });
+
+  it('Calling undo/redo/clear with group ID', function () {
+    let groupId;
+    addItem('A');
+    addItemToUndo('A');
+    addItem('B');
+    addItemToUndo('B');
+
+    groupId = 'CDE';
+    addItem('C');
+    addItemToUndo('C', groupId);
+    addItem('D');
+    addItemToUndo('D', groupId);
+    addItem('E');
+    addItemToUndo('E', groupId);
+    addItem('F');
+    addItemToUndo('F');
+
+    // Undo
+    expect(items.length).toBe(6);
+    undoManager.undo();
+    expect(items.length).toBe(5);
+    undoManager.undo();
+    expect(items.length).toBe(2);
+    expect(undoManager.getCommands(groupId).length).toBe(3);
+
+    // Redo
+    undoManager.redo();
+    expect(items.length).toBe(5);
+    undoManager.redo();
+    expect(items.length).toBe(6);
+
+    // Clear
+    undoManager.clear();
+    expect(undoManager.getCommands(groupId).length).toBe(0);
   });
 });

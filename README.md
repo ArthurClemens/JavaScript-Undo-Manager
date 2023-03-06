@@ -7,6 +7,7 @@ Simple undo manager to provide undo and redo actions in JavaScript applications.
 - [Installation](#installation)
 - [Example](#example)
 - [Methods](#methods)
+  - [add](#add)
   - [undo](#undo)
   - [redo](#redo)
   - [clear](#clear)
@@ -49,8 +50,7 @@ undoManager.add({
 });
 ```
 
-To make an action undoable, you'd add an undo/redo pair to the undo manager:
-
+To make an action undoable, you'd add an undo/redo command pair to the undo manager:
 
 ```js
 const undoManager = new UndoManager();
@@ -93,6 +93,34 @@ console.log(people); // logs: {101: "John"}
 
 ## Methods
 
+### add
+
+Adds an undo/redo command pair to the stack.
+
+```js
+function createPerson(id, name) {
+  // first creation
+  addPerson(id, name);
+
+  // make undoable
+  undoManager.add({
+    undo: () => removePerson(id),
+    redo: () => addPerson(id, name)
+  });
+}
+```
+
+Optionally add a `groupId` to identify related command pairs. Undo and redo actions will then be performed on all adjacent command pairs with that group id.
+
+```js
+undoManager.add({
+  groupId: 'auth',
+  undo: () => removePerson(id),
+  redo: () => addPerson(id, name)
+});
+```
+
+
 ### undo
 
 Performs the undo action.
@@ -101,6 +129,8 @@ Performs the undo action.
 undoManager.undo();
 ```
 
+If a `groupId` was set, the undo action will be performed on all adjacent command pairs with that group id.
+
 ### redo
 
 Performs the redo action.
@@ -108,6 +138,8 @@ Performs the redo action.
 ```js
 undoManager.redo();
 ```
+
+If a `groupId` was set, the redo action will be performed on all adjacent command pairs with that group id.
 
 ### clear
 
@@ -159,10 +191,11 @@ const index = undoManager.getIndex();
 
 ### getCommands
 
-Returns the list of queued commands.
+Returns the list of queued commands, optionally filtered by group id.
 
 ```js
 const commands = undoManager.getCommands();
+const commands = undoManager.getCommands(groupId);
 ```
 
 ## Use with CommonJS

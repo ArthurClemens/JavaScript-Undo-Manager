@@ -3,12 +3,12 @@ window.onload = function () {
 
   const undoManager = new window.UndoManager();
   const circleDrawer = new CircleDrawer('view', undoManager);
-
   const ctrlLimit = document.getElementById('ctrlLimit');
   const btnUndo = document.getElementById('btnUndo');
   const btnRedo = document.getElementById('btnRedo');
   const btnClearMemory = document.getElementById('btnClearMemory');
   const btnClearScreen = document.getElementById('btnClearScreen');
+  const btnGroup = document.getElementById('btnGroup');
 
   function updateUI() {
     btnUndo.disabled = !undoManager.hasUndo();
@@ -35,6 +35,16 @@ window.onload = function () {
     circleDrawer.clearAll();
     undoManager.clear();
     updateUI();
+  });
+
+  btnGroup.addEventListener('click', function () {
+    const c = btnGroup.classList;
+    c.toggle('active');
+    if (c.contains('active')) {
+      circleDrawer.setGroupId(new Date().getTime());
+    } else {
+      circleDrawer.clearGroupId();
+    }
   });
 
   function handleLimit(rawLimit) {
