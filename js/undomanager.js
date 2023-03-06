@@ -23,11 +23,16 @@ https://github.com/ArthurClemens/JavaScript-Undo-Manager
       index = -1,
       limit = 0,
       isExecuting = false,
-      callback,
-      // functions
-      execute;
+      callback;
 
-    execute = function (command, action) {
+    /**
+     * Executes a single command.
+     * @property {object} command        - Command
+     * @property {function} command.undo - Undo function
+     * @property {function} command.redo - Redo function
+     * @property {string} action         - "undo" or "redo"
+     */
+    function execute(command, action) {
       if (!command || typeof command[action] !== 'function') {
         return this;
       }
@@ -37,12 +42,16 @@ https://github.com/ArthurClemens/JavaScript-Undo-Manager
 
       isExecuting = false;
       return this;
-    };
+    }
 
     return {
-      /*
-      Add a command to the queue.
-      */
+      /**
+       * Adds a command to the queue.
+       * @property {object} command           - Command
+       * @property {function} command.undo    - Undo function
+       * @property {function} command.redo    - Redo function
+       * @property {string} [command.groupId] - Optional group id
+       */
       add: function (command) {
         if (isExecuting) {
           return this;
@@ -50,7 +59,6 @@ https://github.com/ArthurClemens/JavaScript-Undo-Manager
         // if we are here after having called undo,
         // invalidate items higher on the stack
         commands.splice(index + 1, commands.length - index);
-
         commands.push(command);
 
         // if limit is set, remove items from the start
@@ -66,48 +74,63 @@ https://github.com/ArthurClemens/JavaScript-Undo-Manager
         return this;
       },
 
-      /*
-      Pass a function to be called on undo and redo actions.
-      */
+      /**
+       * Pass a function to be called on undo and redo actions.
+       * @property {function} callbackFunc - Callback function
+       */
       setCallback: function (callbackFunc) {
         callback = callbackFunc;
       },
 
-      /*
-      Perform undo: call the undo function at the current index and decrease the index by 1.
-      */
+      /**
+       * Performs undo: call the undo function at the current index and decrease the index by 1.
+       */
       undo: function () {
         let command = commands[index];
         if (!command) {
           return this;
         }
-        execute(command, 'undo');
-        index -= 1;
+
+        const groupId = command.groupId;
+        while (command.groupId === groupId) {
+          execute(command, 'undo');
+          index -= 1;
+          command = commands[index];
+          if (!command || !command.groupId) break;
+        }
+
         if (callback) {
           callback();
         }
         return this;
       },
 
-      /*
-      Perform redo: call the redo function at the next index and increase the index by 1.
-      */
+      /**
+       * Performs redo: call the redo function at the next index and increase the index by 1.
+       */
       redo: function () {
         let command = commands[index + 1];
         if (!command) {
           return this;
         }
-        execute(command, 'redo');
-        index += 1;
+
+        const groupId = command.groupId;
+        while (command.groupId === groupId) {
+          execute(command, 'redo');
+          index += 1;
+          command = commands[index + 1];
+          if (!command || !command.groupId) break;
+        }
+
         if (callback) {
           callback();
         }
         return this;
       },
 
-      /*
-      Clear the memory, losing all stored states. Reset the index.
-      */
+      /**
+       * Clears the memory, losing all stored states. Resets the index.
+       */
       clear: function () {
         let prev_size = commands.length;
 
@@ -119,24 +142,45 @@ https://github.com/ArthurClemens/JavaScript-Undo-Manager
         }
       },
 
+      /**
+       * Tests if any undo actions exist.
+       * @returns {boolean}
+       */
       hasUndo: function () {
         return index !== -1;
       },
 
+      /**
+       * Tests if any redo actions exist.
+       * @returns {boolean}
+       */
       hasRedo: function () {
         return index < commands.length - 1;
       },
 
-      getCommands: function () {
-        return commands;
+      /**
+       * Returns the list of queued commands.
+       * @param {string} [groupId] - Optionally filter commands by group ID
+       * @returns {array}
+       */
+      getCommands: function (groupId) {
+        return groupId ? commands.filter(c => c.groupId === groupId) : commands;
       },
 
+      /**
+       * Returns the index of the actions list.
+       * @returns {number}
+       */
       getIndex: function () {
         return index;
       },
 
-      setLimit: function (l) {
-        limit = l;
+      /**
+       * Sets the maximum number of undo steps. Default: 0 (unlimited).
+       * @property {number} max - Maximum number of undo steps
+       */
+      setLimit: function (max) {
+        limit = max;
       },
     };
   };
