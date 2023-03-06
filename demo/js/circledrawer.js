@@ -10,6 +10,7 @@ const CircleDrawer = function (canvasId, undoManager) {
   const circles = [];
   const circleId = 0;
   const drawingCanvas = window.document.getElementById(canvasId);
+  let groupId;
 
   if (drawingCanvas.getContext === undefined) {
     return;
@@ -61,6 +62,7 @@ const CircleDrawer = function (canvasId, undoManager) {
     circles.push(attrs);
     draw();
     undoManager.add({
+      groupId,
       undo: function () {
         removeCircle(attrs.id);
       },
@@ -68,6 +70,13 @@ const CircleDrawer = function (canvasId, undoManager) {
         createCircle(attrs);
       },
     });
+  }
+
+  function setGroupId(id) {
+    groupId = id;
+  }
+  function clearGroupId() {
+    groupId = undefined;
   }
 
   drawingCanvas.addEventListener(
@@ -121,5 +130,7 @@ const CircleDrawer = function (canvasId, undoManager) {
 
   return {
     clearAll,
+    setGroupId,
+    clearGroupId,
   };
 };
