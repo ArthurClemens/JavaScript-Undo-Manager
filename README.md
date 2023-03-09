@@ -6,6 +6,7 @@ Simple undo manager to provide undo and redo actions in JavaScript applications.
 - [Demos](#demos)
 - [Installation](#installation)
 - [Example](#example)
+- [Updating the UI](#updating-the-ui)
 - [Methods](#methods)
   - [add](#add)
   - [undo](#undo)
@@ -23,6 +24,7 @@ Simple undo manager to provide undo and redo actions in JavaScript applications.
 
 ## Demos
 
+* [CodeSandbox with RGB color slider](https://codesandbox.io/s/undo-manager-color-sliders-z4myoj)
 * [Undo Manager with canvas drawing](https://arthurclemens.github.io/JavaScript-Undo-Manager/)
 * [JSBin demo, also with canvas](http://jsbin.com/tidibi/edit?js,output)
 
@@ -90,6 +92,66 @@ undoManager.redo();
 console.log(people); // logs: {101: "John"}
 ```
 
+## Updating the UI
+
+TL;DR UI that relies on undo manager state - for example `hasUndo` and `hasRedo` - needs to be updated using the callback function provided with `setCallback`. This ensures that all internal state has been resolved before the UI is repainted.
+
+Let's say we have an update function that conditionally disables the undo and redo buttons:
+
+```js
+function updateUI() {
+  btn_undo.disabled = !undoManager.hasUndo();
+  btn_redo.disabled = !undoManager.hasRedo();
+}
+```
+
+You might be inclined to call the update in the undo/redo command pair:
+
+```js
+// wrong approach, don't copy
+const undoManager = new UndoManager();
+const states = [];
+
+function updateState(newState) {
+  states.push(newState);
+  updateUI();
+
+  undoManager.add({
+    undo: function () {
+      states.pop();
+      updateUI(); // <= this will lead to inconsistent UI state
+    },
+    redo: function () {
+      states.push(newState);
+      updateUI(); // <= this will lead to inconsistent UI state
+    }
+  });
+}
+```
+
+Instead, pass the update function to `setCallback`:
+
+```js
+// recommended approach
+const undoManager = new UndoManager();
+undoManager.setCallback(updateUI);
+
+const states = [];
+
+function updateState(newState) {
+  states.push(newState);
+  updateUI();
+
+  undoManager.add({
+    undo: function () {
+      states.pop();
+    },
+    redo: function () {
+      states.push(newState);
+    }
+  });
+}
+```
 
 ## Methods
 
