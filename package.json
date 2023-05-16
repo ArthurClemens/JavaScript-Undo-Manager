@@ -4,8 +4,8 @@
   "description": "Simple undo manager to provide undo and redo actions in JavaScript applications.",
   "main": "lib/undomanager.js",
   "scripts": {
-    "postinstall": "sh scripts/link-lib.sh",
     "lint": "eslint --ext .js --fix .",
+    "pretest": "sh scripts/link-lib.sh",
     "test": "jasmine-browser-runner runSpecs",
     "github": "cp -pfr demo/* ../gh-pages"
   },
